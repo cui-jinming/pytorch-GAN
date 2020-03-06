@@ -1,3 +1,4 @@
 # pytorch-GAN
 learning GAN by myself
-CGAN
+  CGAN
+  https://www.cnblogs.com/woshizhizhang/p/12426264.html

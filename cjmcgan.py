@@ -1,24 +1,18 @@
 import argparse
 import os
 import numpy as np
-import math
 
-import torchvision.transforms as transforms
 from torchvision.utils import save_image
 
 from torch.utils.data import DataLoader
-from torchvision import datasets
 from torch.autograd import Variable
 
 import torch.nn as nn
-import torch.nn.functional as F
 import torch
 
 import torchvision
-from torchvision import transforms, utils
-from torch.utils.data import Dataset
+from torchvision import transforms
 from PIL import Image
-import glob
 
 os.makedirs("images/cjmcgan", exist_ok=True)
 
@@ -108,48 +102,6 @@ if cuda:
     discriminator.cuda()
     adversarial_loss.cuda()
 
-# Configure data loader
-# os.makedirs("../../data/mnist", exist_ok=True)
-# dataloader = torch.utils.data.DataLoader(
-#     datasets.MNIST(
-#         "../../data/mnist",
-#         train=True,
-#         download=True,
-#         transform=transforms.Compose(
-#             [transforms.Resize(opt.img_size), transforms.ToTensor(), transforms.Normalize([0.5], [0.5])]
-#         ),
-#     ),
-#     batch_size=opt.batch_size,
-#     shuffle=True,
-# )
-
-# 小明开始
-def to_rgb(image):
-    rgb_image = Image.new("RGB", image.size)
-    rgb_image.paste(image)
-    return rgb_image
-
-
-
-# class ImageDataset(Dataset):
-#     def __init__(self, root, transforms_=None, mode='train'):
-#         self.transform_x = transforms.Compose(transforms_)
-#
-#         self.files = sorted(glob.glob('%s/*.*' % root))
-#
-#     def __getitem__(self, index):
-#
-#         img = Image.open(self.files[index % len(self.files)])
-#
-#         x = self.transform_x(img)
-#         x_lr = self.transform_lr(img)
-#
-#         return {'x': x, 'x_lr': x_lr}
-#
-#     def __len__(self):
-#         return len(self.files)
-
-
 transforms_ = transforms.Compose([
     transforms.Resize(int(opt.img_size * 1.12), Image.BICUBIC),#
     transforms.RandomCrop((opt.img_size, opt.img_size)),  # 随机裁剪
@@ -158,16 +110,10 @@ transforms_ = transforms.Compose([
     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),  # 标准化
 ])
 
-# dataloader = torch.utils.data.DataLoader(
-#     ImageDataset("../../data/sheep", transforms_=transforms_, unaligned=True),
-#     batch_size=opt.batch_size,
-#     shuffle=True,
-# )
 img_data = torchvision.datasets.ImageFolder('D:/workspace/python/PycharmProjects/PyTorch-GAN-master/data/sheep',
                                             transform=transforms_)
 dataloader = torch.utils.data.DataLoader(img_data, batch_size=opt.batch_size, shuffle=True)
-print(img_data.classes)  #根据分的文件夹的名字来确定的类别
-print(img_data.class_to_idx) # 按顺序为这些类别定义索引为0,1...
+print(img_data.class_to_idx)  # 按顺序为这些类别定义索引为0,1...
 
 # Optimizers
 optimizer_G = torch.optim.Adam(generator.parameters(), lr=opt.lr, betas=(opt.b1, opt.b2))
